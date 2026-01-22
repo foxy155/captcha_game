@@ -8,7 +8,9 @@ body {
     font-family: 'Arial', sans-serif;
     overflow: hidden;
     background: #0a0a0a;
-    cursor: none;
+    cursor: crosshair;
+    margin: 0;
+    padding: 0;
 }
 
 .game-container {
@@ -239,6 +241,7 @@ body {
     justify-content: center;
     align-items: center;
     z-index: 2000;
+    cursor: default;
 }
 
 .start-content {

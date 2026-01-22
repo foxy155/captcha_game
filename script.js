@@ -20,16 +20,29 @@ class FPSCaptcha {
     }
     
     setupEventListeners() {
-        document.getElementById('startBtn').addEventListener('click', () => this.startGame());
-        document.getElementById('resetBtn').addEventListener('click', () => this.resetGame());
-        document.getElementById('retryBtn').addEventListener('click', () => this.resetGame());
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const retryBtn = document.getElementById('retryBtn');
+        const targetsArea = document.getElementById('targetsArea');
+        
+        if (startBtn) {
+            startBtn.addEventListener('click', () => this.startGame());
+        }
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => this.resetGame());
+        }
+        if (retryBtn) {
+            retryBtn.addEventListener('click', () => this.resetGame());
+        }
         
         // Shooting
-        document.getElementById('targetsArea').addEventListener('click', (e) => {
-            if (this.gameActive && e.target.classList.contains('target')) {
-                this.shootTarget(e.target, e);
-            }
-        });
+        if (targetsArea) {
+            targetsArea.addEventListener('click', (e) => {
+                if (this.gameActive && e.target.classList.contains('target')) {
+                    this.shootTarget(e.target, e);
+                }
+            });
+        }
     }
     
     setupMouseTracking() {
@@ -45,6 +58,7 @@ class FPSCaptcha {
     }
     
     startGame() {
+        console.log('Starting game...');
         this.gameActive = true;
         this.score = 0;
         this.targetsHit = 0;
@@ -52,10 +66,15 @@ class FPSCaptcha {
         this.startTime = Date.now();
         
         // Hide start screen, show game
-        document.getElementById('startScreen').style.display = 'none';
-        document.getElementById('fpsView').classList.add('active');
-        document.getElementById('successScreen').style.display = 'none';
-        document.getElementById('failScreen').style.display = 'none';
+        const startScreen = document.getElementById('startScreen');
+        const fpsView = document.getElementById('fpsView');
+        const successScreen = document.getElementById('successScreen');
+        const failScreen = document.getElementById('failScreen');
+        
+        if (startScreen) startScreen.style.display = 'none';
+        if (fpsView) fpsView.classList.add('active');
+        if (successScreen) successScreen.style.display = 'none';
+        if (failScreen) failScreen.style.display = 'none';
         
         // Clear existing targets
         this.clearTargets();
@@ -64,12 +83,14 @@ class FPSCaptcha {
         this.startTimer();
         
         // Start spawning targets
-        this.spawnTarget();
-        this.targetSpawnInterval = setInterval(() => {
-            if (this.targets.length < 3 && this.gameActive) {
-                this.spawnTarget();
-            }
-        }, 2000);
+        setTimeout(() => {
+            this.spawnTarget();
+            this.targetSpawnInterval = setInterval(() => {
+                if (this.targets.length < 3 && this.gameActive) {
+                    this.spawnTarget();
+                }
+            }, 2000);
+        }, 100);
         
         // Update UI
         this.updateUI();
@@ -300,9 +321,27 @@ class FPSCaptcha {
 }
 
 // Initialize when page loads
+let gameInstance = null;
+
 document.addEventListener('DOMContentLoaded', () => {
-    new FPSCaptcha();
+    console.log('DOM loaded, initializing game...');
+    gameInstance = new FPSCaptcha();
+    console.log('Game initialized');
 });
+
+// Fallback initialization
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        if (!gameInstance) {
+            gameInstance = new FPSCaptcha();
+        }
+    });
+} else {
+    // DOM already loaded
+    if (!gameInstance) {
+        gameInstance = new FPSCaptcha();
+    }
+}
 
 // Prevent right-click
 document.addEventListener('contextmenu', (e) => {
