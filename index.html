@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Krunker Style Captcha</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="captcha-box" id="captchaBox">
+            <div class="header">
+                <h1>Verify You're Human</h1>
+                <p class="subtitle">Complete the challenge to continue</p>
+            </div>
+            
+            <div class="challenge-container" id="challengeContainer">
+                <div class="challenge-type" id="challengeType">
+                    <h2 id="challengeTitle">Click the targets in order</h2>
+                    <p class="instruction" id="instruction">Click the numbered targets from 1 to 5</p>
+                </div>
+                
+                <div class="targets-grid" id="targetsGrid"></div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                
+                <div class="status" id="status"></div>
+            </div>
+            
+            <div class="success-screen" id="successScreen" style="display: none;">
+                <div class="checkmark">âœ“</div>
+                <h2>Verification Complete!</h2>
+                <p>You've successfully verified you're human.</p>
+                <div class="token-display">
+                    <p>Verification Token:</p>
+                    <code id="verificationToken"></code>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <button class="btn-reset" id="resetBtn" style="display: none;">Try Again</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
