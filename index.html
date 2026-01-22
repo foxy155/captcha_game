@@ -11,7 +11,9 @@
         <!-- FPS View -->
         <div class="fps-view" id="fpsView">
             <div class="crosshair" id="crosshair"></div>
-            <div class="targets-area" id="targetsArea"></div>
+            <div class="game-world" id="gameWorld">
+                <div class="bot" id="bot"></div>
+            </div>
             
             <!-- HUD Overlay -->
             <div class="hud">
@@ -20,30 +22,37 @@
                         <span class="label">SCORE:</span>
                         <span class="value" id="scoreValue">0</span>
                     </div>
-                    <div class="targets-left">
-                        <span class="label">TARGETS:</span>
-                        <span class="value" id="targetsLeft">5</span>
+                    <div class="bot-status">
+                        <span class="label">BOT:</span>
+                        <span class="value" id="botStatus">ALIVE</span>
                     </div>
                     <div class="timer">
                         <span class="label">TIME:</span>
                         <span class="value" id="timerValue">30</span>
                     </div>
                 </div>
+                <div class="controls-hint">
+                    <p>WASD to move • Mouse to aim • Click to shoot</p>
+                </div>
             </div>
             
             <!-- Muzzle Flash Effect -->
             <div class="muzzle-flash" id="muzzleFlash"></div>
+            
+            <!-- Bullet Impact -->
+            <div class="bullet-impact" id="bulletImpact"></div>
         </div>
         
         <!-- Start Screen -->
         <div class="start-screen" id="startScreen">
             <div class="start-content">
                 <h1 class="game-title">FPS CAPTCHA</h1>
-                <p class="game-subtitle">Shoot the targets to verify you're human</p>
+                <p class="game-subtitle">Kill the bot to verify you're human</p>
                 <div class="instructions">
-                    <p>🎯 Click to shoot targets</p>
+                    <p>🎮 WASD keys to move</p>
+                    <p>🖱️ Mouse to aim and look around</p>
+                    <p>🔫 Click to shoot the bot</p>
                     <p>⏱️ Complete before time runs out</p>
-                    <p>🎮 5 targets to eliminate</p>
                 </div>
                 <button class="btn-start" id="startBtn">START GAME</button>
             </div>
@@ -52,8 +61,9 @@
         <!-- Success Screen -->
         <div class="success-screen" id="successScreen" style="display: none;">
             <div class="success-content">
-                <div class="victory-icon">🎯</div>
-                <h2>VERIFICATION COMPLETE!</h2>
+                <div class="victory-icon">✅</div>
+                <h2>VERIFICATION SUCCESSFUL</h2>
+                <p class="success-message">You are not a robot</p>
                 <div class="stats">
                     <div class="stat">
                         <span class="stat-label">Final Score:</span>
@@ -77,7 +87,7 @@
             <div class="fail-content">
                 <div class="fail-icon">❌</div>
                 <h2>VERIFICATION FAILED</h2>
-                <p>Time ran out! Try again.</p>
+                <p class="fail-message">You are a robot. Try again.</p>
                 <button class="btn-reset" id="retryBtn">Retry</button>
             </div>
         </div>

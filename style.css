@@ -37,16 +37,15 @@ body {
     display: block;
 }
 
-/* Crosshair */
+/* Crosshair - follows mouse */
 .crosshair {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: fixed;
     width: 30px;
     height: 30px;
     pointer-events: none;
     z-index: 1000;
+    transform: translate(-50%, -50%);
+    transition: none;
 }
 
 .crosshair::before,
@@ -73,63 +72,89 @@ body {
     transform: translateY(-50%);
 }
 
-/* Targets Area */
-.targets-area {
+/* Game World */
+.game-world {
     width: 100%;
     height: 100%;
     position: relative;
 }
 
-/* Target */
-.target {
+/* Bot */
+.bot {
     position: absolute;
-    width: 80px;
-    height: 80px;
+    width: 150px;
+    height: 150px;
     background: radial-gradient(circle, #ff4444 0%, #cc0000 100%);
-    border: 3px solid #fff;
+    border: 4px solid #fff;
     border-radius: 50%;
     cursor: pointer;
-    transition: transform 0.1s;
     box-shadow: 
-        0 0 20px rgba(255, 68, 68, 0.6),
-        inset 0 0 20px rgba(255, 255, 255, 0.3);
-    animation: targetPulse 1s ease-in-out infinite;
+        0 0 30px rgba(255, 68, 68, 0.8),
+        inset 0 0 30px rgba(255, 255, 255, 0.3);
     z-index: 100;
+    transition: transform 0.1s, opacity 0.5s;
+    animation: botPulse 2s ease-in-out infinite;
 }
 
-.target::before {
-    content: '🎯';
+.bot::before {
+    content: '🤖';
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 40px;
-    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.5));
+    font-size: 60px;
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.8));
 }
 
-.target:hover {
-    transform: scale(1.1);
-    box-shadow: 
-        0 0 30px rgba(255, 68, 68, 0.9),
-        inset 0 0 30px rgba(255, 255, 255, 0.5);
+.bot::after {
+    content: 'BOT';
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    text-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
+    white-space: nowrap;
 }
 
-.target.hit {
-    animation: targetHit 0.3s ease-out forwards;
+.bot.hit {
+    animation: botHit 0.3s ease-out;
 }
 
-@keyframes targetPulse {
+.bot.dead {
+    animation: botDeath 0.5s ease-out forwards;
+}
+
+@keyframes botPulse {
     0%, 100% {
         transform: scale(1);
-        opacity: 1;
+        box-shadow: 
+            0 0 30px rgba(255, 68, 68, 0.8),
+            inset 0 0 30px rgba(255, 255, 255, 0.3);
     }
     50% {
         transform: scale(1.05);
-        opacity: 0.9;
+        box-shadow: 
+            0 0 40px rgba(255, 68, 68, 1),
+            inset 0 0 40px rgba(255, 255, 255, 0.5);
     }
 }
 
-@keyframes targetHit {
+@keyframes botHit {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2) rotate(10deg);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes botDeath {
     0% {
         transform: scale(1) rotate(0deg);
         opacity: 1;
@@ -167,7 +192,7 @@ body {
 }
 
 .score-display,
-.targets-left,
+.bot-status,
 .timer {
     display: flex;
     flex-direction: column;
@@ -199,12 +224,27 @@ body {
     50% { transform: scale(1.1); }
 }
 
+.controls-hint {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px 20px;
+    border-radius: 5px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.controls-hint p {
+    color: #aaa;
+    font-size: 12px;
+    margin: 0;
+}
+
 /* Muzzle Flash */
 .muzzle-flash {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: fixed;
     width: 100px;
     height: 100px;
     background: radial-gradient(circle, rgba(255, 255, 255, 0.9) 0%, transparent 70%);
@@ -212,6 +252,7 @@ body {
     pointer-events: none;
     opacity: 0;
     z-index: 999;
+    transform: translate(-50%, -50%);
 }
 
 .muzzle-flash.active {
@@ -226,6 +267,38 @@ body {
     100% {
         opacity: 0;
         transform: translate(-50%, -50%) scale(1.5);
+    }
+}
+
+/* Bullet Impact */
+.bullet-impact {
+    position: fixed;
+    width: 20px;
+    height: 20px;
+    background: radial-gradient(circle, rgba(255, 255, 0, 0.8) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 998;
+    transform: translate(-50%, -50%);
+}
+
+.bullet-impact.active {
+    animation: bulletImpact 0.3s ease-out;
+}
+
+@keyframes bulletImpact {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.5);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(2);
     }
 }
 
@@ -352,7 +425,19 @@ body {
 .success-content h2,
 .fail-content h2 {
     font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.success-message,
+.fail-message {
+    font-size: 20px;
     margin-bottom: 20px;
+    color: #4ecdc4;
+    font-weight: bold;
+}
+
+.fail-message {
+    color: #ff4444;
 }
 
 .stats {
@@ -401,54 +486,29 @@ body {
     word-break: break-all;
 }
 
-/* Hit Effect */
-.hit-effect {
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    pointer-events: none;
-    z-index: 998;
-}
-
-.hit-effect::before {
-    content: '+10';
-    position: absolute;
-    color: #4ecdc4;
-    font-size: 24px;
-    font-weight: bold;
-    text-shadow: 0 0 10px rgba(78, 205, 196, 0.8);
-    animation: scoreFloat 1s ease-out forwards;
-}
-
-@keyframes scoreFloat {
-    0% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-    100% {
-        opacity: 0;
-        transform: translateY(-50px) scale(1.5);
-    }
-}
-
 /* Responsive */
 @media (max-width: 768px) {
     .game-title {
         font-size: 40px;
     }
     
-    .target {
-        width: 60px;
-        height: 60px;
+    .bot {
+        width: 100px;
+        height: 100px;
     }
     
-    .target::before {
-        font-size: 30px;
+    .bot::before {
+        font-size: 40px;
     }
     
     .hud-top {
         flex-direction: column;
         gap: 10px;
         padding: 10px;
+    }
+    
+    .controls-hint {
+        font-size: 10px;
+        padding: 8px 15px;
     }
 }
